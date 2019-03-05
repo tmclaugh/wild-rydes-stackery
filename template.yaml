@@ -23,14 +23,20 @@ Resources:
       Tracing: Active
       Policies:
         - AWSXrayWriteOnlyAccess
-      Events:
-        ObjectStore:
-          Type: S3
-          Properties:
-            Bucket: !Ref ObjectStore
-            Events:
-              - s3:ObjectCreated:*
-              - s3:ObjectRemoved:*
+        - S3CrudPolicy:
+            BucketName: !Ref ObjectStore
+        - Statement:
+            - Effect: Allow
+              Action:
+                - s3:GetObjectAcl
+                - s3:PutObjectAcl
+              Resource:
+                - !Sub arn:${AWS::Partition}:s3:::${ObjectStore}
+                - !Sub arn:${AWS::Partition}:s3:::${ObjectStore}/*
+      Environment:
+        Variables:
+          BUCKET_NAME: !Ref ObjectStore
+          BUCKET_ARN: !GetAtt ObjectStore.Arn
   PopulateFrontendContentDeployTrigger:
     Type: Custom::FunctionDeployTrigger
     Properties:
