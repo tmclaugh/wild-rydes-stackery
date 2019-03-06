@@ -136,6 +136,7 @@ Resources:
           TABLE_NAME: !Ref Rides
           TABLE_ARN: !GetAtt Rides.Arn
           SECRETS_NAMESPACE: !Sub /${EnvironmentTagName}/
+          UNICORN_STABLE_API: !Ref EnvConfigunicornStableApiAsString
   Rides:
     Type: AWS::DynamoDB::Table
     Properties:
@@ -162,3 +163,9 @@ Parameters:
   EnvironmentAPIGatewayStageName:
     Type: String
     Description: Environment name used for API Gateway Stage names (injected by Stackery at deployment time)
+  EnvConfigunicornStableApiAsString:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: /<EnvironmentName>/unicornStableApi
+Metadata:
+  EnvConfigParameters:
+    EnvConfigunicornStableApiAsString: unicornStableApi
