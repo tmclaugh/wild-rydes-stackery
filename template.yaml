@@ -1,13 +1,11 @@
 AWSTemplateFormatVersion: 2010-09-09
 Transform: AWS::Serverless-2016-10-31
 Resources:
-  ObjectStore:
+  FrontendContent:
     Type: AWS::S3::Bucket
     Properties:
       WebsiteConfiguration:
         IndexDocument: index.html
-    Metadata:
-      StackeryName: FrontendContent
   PopulateFrontendContent:
     Type: AWS::Serverless::Function
     Properties:
@@ -150,6 +148,31 @@ Resources:
       StreamSpecification:
         StreamViewType: NEW_AND_OLD_IMAGES
       TableName: !Sub ${AWS::StackName}-Rides
+  ObjectStore2:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub ${AWS::StackName}-objectstore2
+  Function:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub ${AWS::StackName}-Function
+      Description: !Sub
+        - Stack ${StackTagName} Environment ${EnvironmentTagName} Function ${ResourceName}
+        - ResourceName: Function
+      CodeUri: src/Function
+      Handler: index.handler
+      Runtime: nodejs8.10
+      MemorySize: 3008
+      Timeout: 30
+      Tracing: Active
+      Policies:
+        - AWSXrayWriteOnlyAccess
+        - S3CrudPolicy:
+            BucketName: !Ref ObjectStore2
+      Environment:
+        Variables:
+          BUCKET_NAME: !Ref ObjectStore2
+          BUCKET_ARN: !GetAtt ObjectStore2.Arn
 Parameters:
   StackTagName:
     Type: String
