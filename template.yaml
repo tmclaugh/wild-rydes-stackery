@@ -29,8 +29,8 @@ Resources:
                 - s3:GetObjectAcl
                 - s3:PutObjectAcl
               Resource:
-                - !Sub arn:${AWS::Partition}:s3:::${ObjectStore}
-                - !Sub arn:${AWS::Partition}:s3:::${ObjectStore}/*
+                - !Sub arn:${AWS::Partition}:s3:::${FrontendContent}
+                - !Sub arn:${AWS::Partition}:s3:::${FrontendContent}/*
         - Statement:
             - Effect: Allow
               Action:
@@ -49,8 +49,8 @@ Resources:
               Resource: !GetAtt UserPool.Arn
       Environment:
         Variables:
-          BUCKET_NAME: !Ref ObjectStore
-          BUCKET_ARN: !GetAtt ObjectStore.Arn
+          BUCKET_NAME: !Ref FrontendContent
+          BUCKET_ARN: !GetAtt FrontendContent.Arn
           USER_POOL_ID: !Ref UserPool
           USER_POOL_ARN: !GetAtt UserPool.Arn
           USER_POOL_CLIENT_ID: !Ref UserPoolClient
